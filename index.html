@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Танки с Уровнями</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>2D Танки</h1>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
+    <div id="controls-info">
+        Управление: Стрелки - задать направление и двигаться на 1 клетку, Пробел - огонь
+    </div>
+    <div id="level-info">
+        Уровень: <span id="current-level">1</span>
+    </div>
+    <div id="lives-info">
+        Жизни: <span id="current-lives">3</span>
+    </div>
+    <div id="ammo-info">
+        Обойма: <span id="ammo-status">5 / 5</span>
+    </div>
+    <button id="skin-button">Скины</button>
+
+    <div id="skin-menu" class="hidden">
+        <h3>Выберите скин:</h3>
+        <div class="skin-previews">
+            <!-- Сюда будут добавлены превью скинов из JS -->
+        </div>
+        <button id="close-skin-menu">Закрыть</button>
+    </div>
+
+    <script src="js/level.js"></script>
+    <script src="js/tank.js"></script>
+    <script src="js/bullet.js"></script>
+    <script src="js/enemy.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
