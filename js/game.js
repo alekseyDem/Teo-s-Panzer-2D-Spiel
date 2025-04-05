@@ -15,8 +15,8 @@ const GAME_STATE = {
 let gameState = GAME_STATE.PLAYING;
 
 // Ссылки на DOM элементы
-const livesSpan = document.getElementById('current-lives');
-const ammoSpan = document.getElementById('ammo-status');
+let livesSpan;
+let ammoSpan;
 const skinButton = document.getElementById('skin-button');
 const skinMenu = document.getElementById('skin-menu');
 const skinPreviewsContainer = skinMenu.querySelector('.skin-previews');
@@ -117,7 +117,62 @@ function setupInputListeners() {
         }
     });
 
+    // Language selector listeners
+    const langRuButton = document.getElementById('lang-ru');
+    const langDeButton = document.getElementById('lang-de');
+
+    langRuButton.addEventListener('click', () => {
+        langRuButton.classList.add('active');
+        langDeButton.classList.remove('active');
+        switchLanguage('ru');
+        // Refresh DOM references after language switch
+        refreshDOMReferences();
+        // Preserve game state values after language switch
+        updateGameStateDisplay();
+    });
+
+    langDeButton.addEventListener('click', () => {
+        langDeButton.classList.add('active');
+        langRuButton.classList.remove('active');
+        switchLanguage('de');
+        // Refresh DOM references after language switch
+        refreshDOMReferences();
+        // Preserve game state values after language switch
+        updateGameStateDisplay();
+    });
+
     window.inputListenersSetup = true; // Устанавливаем флаг
+}
+
+// Helper function to preserve game state values when language is switched
+function updateGameStateDisplay() {
+    // Make sure we have the latest references
+    refreshDOMReferences();
+    
+    const currentLevel = document.getElementById('current-level');
+    
+    if (currentLevel) {
+        currentLevel.textContent = (currentLevelIndex + 1).toString();
+    }
+    
+    if (playerTank && livesSpan) {
+        livesSpan.textContent = playerTank.lives.toString();
+    }
+    
+    // Fix reload status display
+    if (playerTank && ammoSpan) {
+        if (playerTank.burstShotsFired >= playerTank.maxBurstShots && playerTank.fireCooldown > 0) {
+            // During reload
+            const reloadProgress = Math.floor((1 - playerTank.fireCooldown / playerTank.burstCooldown) * 100);
+            ammoSpan.textContent = `${LANGUAGES[currentLanguage].reload} ${reloadProgress}%`;
+            ammoSpan.style.color = '#ff8c00'; // Orange color for reload
+        } else {
+            // Show remaining shots
+            const shotsLeft = playerTank.maxBurstShots - playerTank.burstShotsFired;
+            ammoSpan.textContent = `${shotsLeft} / ${playerTank.maxBurstShots}`;
+            ammoSpan.style.color = '#ddd'; // Standard color
+        }
+    }
 }
 
 function respawnPlayer() {
@@ -307,26 +362,30 @@ function drawGameOverScreen(ctx) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    const lang = LANGUAGES[currentLanguage];
+    
     ctx.font = '40px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText('ИГРА ОКОНЧЕНА', canvas.width / 2, canvas.height / 2 - 30);
+    ctx.fillText(lang.gameOver, canvas.width / 2, canvas.height / 2 - 30);
 
     ctx.font = '20px Arial';
-    ctx.fillText('Нажмите Enter для перезапуска', canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText(lang.restart, canvas.width / 2, canvas.height / 2 + 20);
 }
 
 function drawGameWonScreen(ctx) {
     ctx.fillStyle = 'rgba(0, 100, 0, 0.7)'; // Зеленый фон
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    const lang = LANGUAGES[currentLanguage];
+    
     ctx.font = '40px Arial';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
-    ctx.fillText('ПОБЕДА!', canvas.width / 2, canvas.height / 2 - 30);
+    ctx.fillText(lang.gameWon, canvas.width / 2, canvas.height / 2 - 30);
 
     ctx.font = '20px Arial';
-    ctx.fillText('Вы прошли все уровни! Нажмите Enter для перезапуска', canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText(lang.restart, canvas.width / 2, canvas.height / 2 + 20);
 }
 
 function draw() {
@@ -346,7 +405,7 @@ function draw() {
              if (playerTank.burstShotsFired >= playerTank.maxBurstShots && playerTank.fireCooldown > 0) {
                  // Идет длинная перезарядка
                  const reloadProgress = Math.floor((1 - playerTank.fireCooldown / playerTank.burstCooldown) * 100);
-                 ammoSpan.textContent = `Перезарядка ${reloadProgress}%`;
+                 ammoSpan.textContent = `${LANGUAGES[currentLanguage].reload} ${reloadProgress}%`;
                  ammoSpan.style.color = '#ff8c00'; // Оранжевый цвет для перезарядки
              } else {
                  // Показываем оставшиеся выстрелы
@@ -363,10 +422,16 @@ function draw() {
 }
 
 let gameLoopRequestId; // Для возможной остановки цикла
+let lastTimestamp = 0;
+const targetFPS = 120; // Target 120 frames per second
+const frameInterval = 1000 / targetFPS;
 
-function gameLoop() {
+function gameLoop(timestamp) {
+    // Always update and draw on each frame for maximum responsiveness
     update();
     draw();
+    
+    // Request next frame
     gameLoopRequestId = requestAnimationFrame(gameLoop);
 }
 
@@ -410,8 +475,24 @@ function populateSkinMenu() {
 // Измененный запуск игры
 async function initializeGame() {
     await preloadImages(); // Ждем загрузки изображений
+    
+    // Ensure language is properly initialized
+    updateUILanguage();
+    
+    // Refresh DOM references after language initialization
+    refreshDOMReferences();
+    
     startGame();          // Инициализируем состояние игры
     gameLoop();           // Запускаем игровой цикл
 }
+
+// Function to refresh DOM references
+function refreshDOMReferences() {
+    livesSpan = document.getElementById('current-lives');
+    ammoSpan = document.getElementById('ammo-status');
+}
+
+// Refresh references on initial load
+document.addEventListener('DOMContentLoaded', refreshDOMReferences);
 
 initializeGame(); // Вызываем новую функцию инициализации

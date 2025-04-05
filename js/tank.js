@@ -29,13 +29,13 @@ class Tank {
         this.turretWidth = TILE_SIZE * 0.15;
 
         this.bullets = [];
-        this.intraBurstCooldown = 15;
+        this.intraBurstCooldown = 4;
         this.fireCooldown = 0;
         this.burstShotsFired = 0;
         this.maxBurstShots = 5;
-        this.burstCooldown = 180;
+        this.burstCooldown = 60;
         this.moveCooldown = 0;
-        this.maxMoveCooldown = 12;
+        this.maxMoveCooldown = 3;
         this.lives = 3;
     }
 

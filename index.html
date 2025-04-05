@@ -1,38 +1,45 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Танки с Уровнями</title>
+    <title>2D Panzer mit Levels</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>2D Танки</h1>
+    <h1>2D Panzer</h1>
     <div id="game-container">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
     </div>
     <div id="controls-info">
-        Управление: Стрелки - задать направление и двигаться на 1 клетку, Пробел - огонь
+        Steuerung: Pfeiltasten - Richtung einstellen und 1 Feld bewegen, Leertaste - Feuer
     </div>
     <div id="level-info">
-        Уровень: <span id="current-level">1</span>
+        Level: <span id="current-level">1</span>
     </div>
     <div id="lives-info">
-        Жизни: <span id="current-lives">3</span>
+        Leben: <span id="current-lives">3</span>
     </div>
     <div id="ammo-info">
-        Обойма: <span id="ammo-status">5 / 5</span>
+        Magazin: <span id="ammo-status">5 / 5</span>
     </div>
-    <button id="skin-button">Скины</button>
+    <div id="buttons-container">
+        <button id="skin-button">Skins</button>
+        <div id="language-selector">
+            <button id="lang-ru">RU</button>
+            <button id="lang-de" class="active">DE</button>
+        </div>
+    </div>
 
     <div id="skin-menu" class="hidden">
-        <h3>Выберите скин:</h3>
+        <h3>Skin wählen:</h3>
         <div class="skin-previews">
             <!-- Сюда будут добавлены превью скинов из JS -->
         </div>
-        <button id="close-skin-menu">Закрыть</button>
+        <button id="close-skin-menu">Schließen</button>
     </div>
 
+    <script src="js/lang.js"></script>
     <script src="js/level.js"></script>
     <script src="js/tank.js"></script>
     <script src="js/bullet.js"></script>

@@ -12,9 +12,9 @@ class Enemy {
         this.angle = Math.PI / 2; // Начинает смотреть вниз
         this.intendedAngle = this.angle;
         this.moveCooldown = 0;
-        this.maxMoveCooldown = Math.max(10, 24 - Math.floor(levelIndex / 5)); // было 24, уменьшается каждые 5 уровней, минимум 10
+        this.maxMoveCooldown = Math.max(2, 6 - Math.floor(levelIndex / 5)); // Significantly faster
         this.decisionCooldown = 0;
-        this.maxDecisionCooldown = Math.max(20, 60 - Math.floor(levelIndex / 3)); // было 60, уменьшается каждые 3 уровня, минимум 20
+        this.maxDecisionCooldown = Math.max(5, 15 - Math.floor(levelIndex / 3)); // Faster decision making
 
         // Сохраняем индекс для возможного использования в будущем
         this.levelIndex = levelIndex;
@@ -33,7 +33,7 @@ class Enemy {
         if (this.decisionCooldown <= 0) {
             const directions = [0, Math.PI / 2, Math.PI, -Math.PI / 2]; // Право, Низ, Лево, Верх
             this.intendedAngle = directions[Math.floor(Math.random() * directions.length)];
-            this.decisionCooldown = this.maxDecisionCooldown + Math.random() * 40; // Случайная задержка для следующего решения
+            this.decisionCooldown = this.maxDecisionCooldown + Math.random() * 20; // Reduced random delay from 40 to 20
         }
 
         // Попытка движения

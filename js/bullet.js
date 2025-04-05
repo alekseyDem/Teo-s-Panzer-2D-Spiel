@@ -3,15 +3,18 @@ class Bullet {
         this.x = x;
         this.y = y;
         this.angle = angle;
-        this.speed = 5;
+        this.speed = 15;
         this.radius = 4;
         this.color = '#ffcc00'; // Желтый
         this.lifetime = 100; // Время жизни пули в кадрах
     }
 
     update() {
-        this.x += Math.cos(this.angle) * this.speed;
-        this.y += Math.sin(this.angle) * this.speed;
+        // Update bullet position multiple times for smoother, faster movement
+        for (let i = 0; i < 2; i++) {
+            this.x += Math.cos(this.angle) * this.speed;
+            this.y += Math.sin(this.angle) * this.speed;
+        }
         this.lifetime--;
     }
 
